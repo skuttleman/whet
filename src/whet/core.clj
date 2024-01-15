@@ -7,14 +7,14 @@
     [whet.impl.template :as tmpl]))
 
 (def ^{:arglists '([be-handler routes])} with-middleware
-  "Wrap your backend handler in this middleware when mounting your app."
+  "Wrap your backend handler AND your ui handler in this middleware when mounting your app."
   mw/with-middleware)
 
 (defn into-template
-  "Takes "
-  [route ui-handler cb]
+  "Creates a store and generates an expanded hiccup template"
+  [route ui-handler store->reagent-tree]
   (let [store (store/hydrate-store route ui-handler)
-        tree (cb store)
+        tree (store->reagent-tree store)
         resources (defacto/subscribe store [::res/?:resources])]
     (tmpl/expand-tree tree)
     (while (some res/requesting? @resources)
@@ -22,11 +22,11 @@
     (tmpl/into-template store (tmpl/expand-tree tree))))
 
 (defn with-html-heads
-  ""
+  "Add additional hiccup nodes to the template's <head> section"
   [template & heads]
   (update template 2 into heads))
 
 (defn render-template
-  ""
+  "renders the HTML template"
   [template]
   (tmpl/render template))

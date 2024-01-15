@@ -1,4 +1,5 @@
 (ns whet.utils.dom
+  "Some helpers for interacting with the DOM in cljc"
   (:require
     [clojure.edn :as edn]))
 

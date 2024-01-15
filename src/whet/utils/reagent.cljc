@@ -1,5 +1,7 @@
 (ns whet.utils.reagent
+  "A wrapper for using reagent in cljc"
   #?(:cljs (:require-macros whet.utils.reagent))
+  (:refer-clojure :exclude [atom])
   (:require
     [reagent.core :as r]))
 
@@ -7,9 +9,9 @@
   #?(:cljs    r/create-class
      :default :reagent-render))
 
-(def ^{:arglists '([value])} ratom
+(def ^{:arglists '([value])} atom
   #?(:cljs    r/atom
-     :default atom))
+     :default clojure.core/atom))
 
 (defmacro with-let [bindings & body]
   (let [final-form (last body)

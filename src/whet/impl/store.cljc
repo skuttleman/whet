@@ -58,7 +58,7 @@
    (-> ctx-map
        (assoc :whet.core/nav nav)
        (res/with-ctx request-fn)
-       (defacto/create wd/init-db {:->sub r/ratom}))))
+       (defacto/create wd/init-db {:->sub r/atom}))))
 
 (defn hydrate-store
   ""
