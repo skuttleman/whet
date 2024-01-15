@@ -1,7 +1,7 @@
 (ns whet.impl.http
   (:require
-    [clojure.core.async :as async]
     [cljs-http.client :as http]
+    [clojure.core.async :as async]
     [defacto.resources.core :as-alias res]
     [whet.interfaces :as iwhet]
     [whet.utils.navigation :as nav]))

@@ -6,10 +6,11 @@
     [ring.util.request :as ring.req]
     [whet.utils.navigation :as nav])
   (:import
-    (java.io PushbackReader)))
+    (java.io InputStream PushbackReader)))
 
 (defn ^:private read-edn [is]
-  (when is
+  (if-not (instance? InputStream is)
+    is
     (let [reader (-> is
                      io/reader
                      PushbackReader.)
@@ -33,9 +34,14 @@
             (update :body pr-str))))))
 
 (defn ^:private with-routing [handler routes]
-  (fn [req]
-    (let [route-info (nav/match routes
-                                (cond-> (:uri req)
+  (fn [{:keys [route uri] :as req}]
+    (let [uri (or uri
+                  (nav/path-for routes
+                                (:token route)
+                                (:route-params route)
+                                (:query-params route)))
+          route-info (nav/match routes
+                                (cond-> uri
                                   (:query-string req) (str "?" (:query-string req))))]
       (handler (assoc req :whet.core/route route-info)))))
 

@@ -59,6 +59,7 @@
           args)))
 
 (defn into-template
+  ""
   [store tree]
   [:html {:lang "en"}
    [:head
@@ -73,7 +74,9 @@
     [:div#root
      tree]]])
 
-(defn render [template]
+(defn render
+  ""
+  [template]
   (->> template
        hiccup/html
        (str "<!doctype html>")))

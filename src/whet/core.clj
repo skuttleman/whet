@@ -1,5 +1,7 @@
 (ns whet.core
   (:require
+    [defacto.core :as defacto]
+    [defacto.resources.core :as res]
     [whet.impl.store :as store]
     [whet.impl.middleware :as mw]
     [whet.impl.template :as tmpl]))
@@ -12,7 +14,10 @@
   ""
   [route ui-handler cb]
   (let [store (store/hydrate-store route ui-handler)
-        tree (tmpl/expand-tree (cb store))]
+        tree (tmpl/expand-tree (cb store))
+        resources (defacto/subscribe store [::res/?:resources])]
+    (while (some res/requesting? @resources)
+      (Thread/sleep 1))
     (tmpl/into-template store tree)))
 
 (defn with-html-heads

@@ -2,22 +2,13 @@
   (:require
     #?(:cljs [pushy.core :as pushy])
     [clojure.edn :as edn]
-    [clojure.pprint :as pp]
     [clojure.set :as set]
     [defacto.core :as defacto]
     [defacto.resources.core :as res]
     [whet.interfaces :as iwhet]
     [whet.utils.dom :as wd]
-    [whet.utils.reagent :as wr]
+    [whet.utils.reagent :as r]
     defacto.impl))
-
-(defmethod defacto/query-responder :whet.core/?:route
-  [db _]
-  (::routing db))
-
-(defmethod defacto/event-reducer :whet.core/navigated
-  [db [_ routing-info]]
-  (assoc db ::routing routing-info))
 
 (deftype StubNav [route ^:volatile-mutable -store]
   defacto/IInitialize
@@ -50,7 +41,6 @@
            (cond-> response
              (string? (:body response)) (update :body edn/read-string)))
          (catch #?(:cljs :default :default Throwable) ex
-           (pp/pprint ex)
            (throw ex)))))
 
 (defn ^:private ->request-fn [handler]
@@ -68,7 +58,7 @@
    (-> ctx-map
        (assoc :whet.core/nav nav)
        (res/with-ctx request-fn)
-       (defacto/create wd/init-db {:->sub wr/ratom}))))
+       (defacto/create wd/init-db {:->sub r/ratom}))))
 
 (defn hydrate-store
   ""
@@ -79,3 +69,11 @@
                 (res/with-ctx handler))]
     (doto (defacto.impl/->WatchableStore ctx (atom nil) defacto-api ->Sub)
       (->> (defacto/init! nav)))))
+
+(defmethod defacto/query-responder :whet.core/?:route
+  [db _]
+  (::routing db))
+
+(defmethod defacto/event-reducer :whet.core/navigated
+  [db [_ routing-info]]
+  (assoc db ::routing routing-info))
