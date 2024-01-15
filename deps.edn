@@ -6,13 +6,13 @@
            kibu/pushy                {:mvn/version "0.3.8"}
            org.clojure/clojure       {:mvn/version "1.11.1"}
            org.clojure/clojurescript {:mvn/version "1.11.60"}
-           org.immutant/immutant     {:mvn/version "2.1.10"
-                                      :exclusions  [ch.qos.logback/logback-classic
-                                                    org.jboss.naming/jnpserver
-                                                    ring/ring-core]}
            reagent/reagent           {:mvn/version "1.2.0"}
            ring/ring-core            {:mvn/version "1.9.6"}
            skuttleman/defacto-forms+ {:git/url   "https://github.com/skuttleman/defacto"
-                                      :git/sha   "0739cd80cf1f1ba8d69a6417509301afd6e6751d"
+                                      :git/sha   "b514df9fad01f56dd16748a7604669dd1d5581c9"
                                       :deps/root "forms+"}}
- :aliases {:dev {:extra-paths ["dev/src"]}}}
+ :aliases {:dev {:extra-paths ["dev/resources" "dev/src"]
+                 :extra-deps  {org.immutant/immutant {:mvn/version "2.1.10"
+                                                      :exclusions  [org.jboss.naming/jnpserver]}
+                               ring/ring-devel       {:mvn/version "1.11.0"}
+                               thheller/shadow-cljs  {:mvn/version "2.26.2"}}}}}

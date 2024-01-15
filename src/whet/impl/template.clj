@@ -1,7 +1,8 @@
-(ns whet.hiccup
-  (:require [clojure.string :as string]
-            [clojure.walk :as walk]
-            [whet.interfaces :as iwhet])
+(ns whet.impl.template
+  (:require
+    [clojure.string :as string]
+    [clojure.walk :as walk]
+    [hiccup.core :as hiccup])
   (:import
     (clojure.lang MultiFn)))
 
@@ -58,17 +59,21 @@
           args)))
 
 (defn into-template
-  [store tree header]
+  [store tree]
   [:html {:lang "en"}
-   (into [:head
-          [:meta {:charset "UTF-8"}]
-          [:meta {:name "viewport" :content "width=device-width"}]
-          [:meta {:http-equiv "X-UA-Compatible" :content "ie=edge"}]
-          [:link {:rel "stylesheet" :href "/css/main.css"}]
-          [:script {:type "application/javascript"}
-           "window.WHET_INITIAL_DB = " (pr-str (pr-str @store))]
-          [:script {:src "/js/main.js" :type "application/javascript" :defer true}]]
-         header)
+   [:head
+    [:meta {:charset "UTF-8"}]
+    [:meta {:name "viewport" :content "width=device-width"}]
+    [:meta {:http-equiv "X-UA-Compatible" :content "ie=edge"}]
+    [:link {:rel "stylesheet" :href "/css/main.css"}]
+    [:script {:type "application/javascript"}
+     "window.WHET_INITIAL_DB = " (pr-str (pr-str @store))]
+    [:script {:src "/js/main.js" :type "application/javascript" :defer true}]]
    [:body
     [:div#root
      tree]]])
+
+(defn render [template]
+  (->> template
+       hiccup/html
+       (str "<!doctype html>")))

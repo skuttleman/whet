@@ -1,9 +1,8 @@
-(ns whet.navigation
+(ns whet.utils.navigation
   (:require
     #?(:cljs [pushy.core :as pushy])
     [bidi.bidi :as bidi]
     [clojure.string :as string]
-    [defacto.core :as defacto]
     [whet.interfaces :as iwhet])
   #?(:clj
      (:import
@@ -24,6 +23,10 @@
       (cond->> (name kw)
         ns (str ns "/")))))
 
+(defn ^:private wrap-set [x]
+  (cond->> x
+    (not (set? x)) (conj #{})))
+
 (defn ->query-string
   "Converts a map of query-params into a query-string.
 
@@ -40,10 +43,6 @@
                             (cond-> v (not (coll? v)) vector)))))
            seq
            (string/join "&")))
-
-(defn ^:private wrap-set [x]
-  (cond->> x
-    (not (set? x)) (conj #{})))
 
 (defn ->query-params
   "Parses a query-string into a map of params. Param values will be a string or set of strings.
@@ -84,11 +83,11 @@
         anchor #?(:cljs (some-> js/document.location.hash not-empty (subs 1))
                   :default nil)
         {:keys [handler route-params]} (bidi/match-route routes path)]
-    (merge {:token        handler
-            :uri          uri
-            :route-params (iwhet/coerce-route-params handler route-params)
-            :query-params (->query-params query-string)
-            :anchor       anchor})))
+    (cond-> {:token        handler
+             :uri          uri
+             :route-params (iwhet/coerce-route-params handler route-params)
+             :query-params (->query-params query-string)}
+      anchor (assoc :anchor anchor))))
 
 (defn navigate!
   "Takes a routing token and optional params and pushes it to the browser's history"
@@ -107,18 +106,3 @@
    (replace! nav token route-params nil))
   ([nav token route-params query-params]
    (iwhet/replace! nav token route-params query-params)))
-
-#?(:cljs
-   (deftype PushyNavigator [routes ^:volatile-mutable -pushy]
-     iwhet/INavigate
-     (navigate! [_ token route-params query-params]
-       (pushy/set-token! -pushy (path-for routes token route-params query-params)))
-     (replace! [_ token route-params query-params]
-       (pushy/replace-token! -pushy (path-for routes token route-params query-params)))
-
-     defacto/IInitialize
-     (init! [_ store]
-       (let [pushy (pushy/pushy #(defacto/emit! store [:whet.core/navigated %])
-                                (partial match routes))]
-         (set! -pushy pushy)
-         (pushy/start! pushy)))))

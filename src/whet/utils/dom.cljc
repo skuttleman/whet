@@ -1,4 +1,4 @@
-(ns whet.dom
+(ns whet.utils.dom
   (:require
     [clojure.edn :as edn]))
 
@@ -6,7 +6,7 @@
   #?(:cljs js/window :default nil))
 
 (def ^:const init-db
-  #?(:cljs    (-> window .-WHET_INITIAL_DB edn/read-string)
+  #?(:cljs    (some-> window .-WHET_INITIAL_DB edn/read-string)
      :default {}))
 
 (defn prevent-default! [e]

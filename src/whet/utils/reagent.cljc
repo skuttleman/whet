@@ -1,5 +1,5 @@
-(ns whet.reagent
-  #?(:cljs (:require-macros whet.reagent))
+(ns whet.utils.reagent
+  #?(:cljs (:require-macros whet.utils.reagent))
   (:require
     [reagent.core :as r]))
 

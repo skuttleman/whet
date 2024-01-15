@@ -11,3 +11,7 @@
           ""
           (fn [token _] token))
 (defmethod coerce-route-params :default [_ params] params)
+
+(defmulti ^{:arglists '([spec-key routes params])} handle-request
+          ""
+          (fn [spec _ _] spec))

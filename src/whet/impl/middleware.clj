@@ -1,8 +1,22 @@
-(ns whet.middleware
+(ns whet.impl.middleware
   (:require
     [clojure.edn :as edn]
+    [clojure.java.io :as io]
     [clojure.string :as string]
-    [ring.util.request :as ring.req]))
+    [ring.util.request :as ring.req]
+    [whet.utils.navigation :as nav])
+  (:import
+    (java.io PushbackReader)))
+
+(defn ^:private read-edn [is]
+  (when is
+    (let [reader (-> is
+                     io/reader
+                     PushbackReader.)
+          byte (.read reader)]
+      (when-not (= -1 byte)
+        (.unread reader byte)
+        (edn/read reader)))))
 
 (defn ^:private with-edn [handler]
   (fn [req]
@@ -10,7 +24,7 @@
                            "application/edn")
           response (-> req
                        (cond-> (string/starts-with? content-type "application/edn")
-                               (update :body edn/read))
+                               (update :body read-edn))
                        handler)]
       (cond-> response
         (and (nil? (get-in response [:headers "content-type"]))
@@ -20,18 +34,12 @@
 
 (defn ^:private with-routing [handler routes]
   (fn [req]
-    #_
-    (let [route-info (rte/match (cond-> (:uri req)
+    (let [route-info (nav/match routes
+                                (cond-> (:uri req)
                                   (:query-string req) (str "?" (:query-string req))))]
-      (handler (assoc req :brainard/route route-info)))))
+      (handler (assoc req :whet.core/route route-info)))))
 
-(defn with-base [handler routes]
+(defn with-middleware [handler routes]
   (-> handler
       with-edn
       (with-routing routes)))
-
-(defn with-hydration
-  ([handler ui-handler]
-   (with-hydration handler ui-handler nil))
-  ([handler ui-handler opts]
-   (fn [req])))
