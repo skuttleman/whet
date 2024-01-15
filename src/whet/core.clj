@@ -7,18 +7,19 @@
     [whet.impl.template :as tmpl]))
 
 (def ^{:arglists '([be-handler routes])} with-middleware
-  ""
+  "Wrap your backend handler in this middleware when mounting your app."
   mw/with-middleware)
 
 (defn into-template
-  ""
+  "Takes "
   [route ui-handler cb]
   (let [store (store/hydrate-store route ui-handler)
-        tree (tmpl/expand-tree (cb store))
+        tree (cb store)
         resources (defacto/subscribe store [::res/?:resources])]
+    (tmpl/expand-tree tree)
     (while (some res/requesting? @resources)
       (Thread/sleep 1))
-    (tmpl/into-template store tree)))
+    (tmpl/into-template store (tmpl/expand-tree tree))))
 
 (defn with-html-heads
   ""
