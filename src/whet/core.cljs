@@ -15,10 +15,10 @@
 
 (defn render-ui
   "creates a store, then mounts and renders the component with a store"
-  ([routes component]
-   (render-ui routes component (constantly nil)))
-  ([routes component cb]
-   (let [[component & args] (cond-> component (not (vector? component)) vector)
-         store (store/create #(iwhet/handle-request %1 routes %2)
-                             (hist/->PushyNavigator routes nil))]
-     (render (into [component store] args) #(cb store)))))
+  ([routes store->component]
+   (render-ui routes store->component (constantly nil)))
+  ([routes store->component cb]
+   (-> (store/create #(iwhet/handle-request %1 routes %2)
+                     (hist/->PushyNavigator routes nil))
+       store->component
+       (render cb))))
