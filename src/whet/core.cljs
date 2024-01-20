@@ -13,12 +13,15 @@
   ([view cb]
    (rdom/render view (.getElementById js/document "root") cb)))
 
+(defn with-ctx [ctx-map routes]
+  (assoc ctx-map ::routes routes ::nav (hist/->PushyNavigator routes nil)))
+
 (defn render-ui
   "creates a store, then mounts and renders the component with a store"
-  ([routes store->component]
-   (render-ui routes store->component (constantly nil)))
-  ([routes store->component cb]
-   (-> (store/create #(iwhet/handle-request %1 routes %2)
-                     (hist/->PushyNavigator routes nil))
+  ([ctx-map store->component]
+   (render-ui ctx-map store->component (constantly nil)))
+  ([ctx-map store->component cb]
+   (-> ctx-map
+       (store/create #(iwhet/handle-request %1 ctx-map %2))
        store->component
        (render cb))))

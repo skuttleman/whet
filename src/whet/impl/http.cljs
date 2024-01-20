@@ -20,7 +20,7 @@
         (update :body #(some-> % pr-str)))))
 
 (defmethod iwhet/handle-request :default
-  [_ routes params]
+  [_ {:whet.core/keys [routes]} params]
   (async/go
     (let [params (prep routes params)
           {:keys [status body]} (async/<! (http/request params))]

@@ -52,13 +52,10 @@
 
 (defn create
   ""
-  ([request-fn nav]
-   (create nil request-fn nav))
-  ([ctx-map request-fn nav]
-   (-> ctx-map
-       (assoc :whet.core/nav nav)
-       (res/with-ctx request-fn)
-       (defacto/create wd/init-db {:->sub r/atom}))))
+  [ctx-map request-fn]
+  (-> ctx-map
+      (res/with-ctx request-fn)
+      (defacto/create wd/init-db {:->sub r/atom})))
 
 (defn hydrate-store
   ""

@@ -12,7 +12,7 @@
           (fn [token _] token))
 (defmethod coerce-route-params :default [_ params] params)
 
-(defmulti ^{:arglists '([spec-key routes params])} handle-request
+(defmulti ^{:arglists '([spec-key ctx-map params])} handle-request
           "extend this multimethod to support defacto resource
            request-fn other than the http client provided"
           (fn [spec _ _] spec))
