@@ -59,10 +59,11 @@
 
 (defn hydrate-store
   ""
-  [route ui-handler]
+  [ctx-map route ui-handler]
   (let [nav (->StubNav route nil)
         handler (-> ui-handler cljs-http->ring ->request-fn)
-        ctx (-> {:whet.core/nav nav}
+        ctx (-> ctx-map
+                (assoc :whet.core/nav nav)
                 (res/with-ctx handler))]
     (doto (defacto.impl/->WatchableStore ctx (atom nil) defacto-api ->Sub)
       (->> (defacto/init! nav)))))

@@ -12,8 +12,8 @@
 
 (defn into-template
   "Creates a store and generates an expanded hiccup template"
-  [route ui-handler store->reagent-tree]
-  (let [store (store/hydrate-store route ui-handler)
+  [ctx-map route ui-handler store->reagent-tree]
+  (let [store (store/hydrate-store ctx-map route ui-handler)
         tree (store->reagent-tree store)
         resources (defacto/subscribe store [::res/?:resources])]
     (tmpl/expand-tree tree)
