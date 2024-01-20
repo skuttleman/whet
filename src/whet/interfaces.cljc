@@ -15,4 +15,5 @@
 (defmulti ^{:arglists '([spec-key ctx-map params])} handle-request
           "extend this multimethod to support defacto resource
            request-fn other than the http client provided"
-          (fn [spec _ _] spec))
+          (fn [_ _ {type :whet.core/type}]
+            (cond-> type (vector? type) first)))
