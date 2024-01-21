@@ -9,6 +9,10 @@
   #?(:cljs    r/create-class
      :default :reagent-render))
 
+(def ^{:arglists '([this])} argv
+  #?(:cljs    r/argv
+     :default (constantly nil)))
+
 (def ^{:arglists '([value])} atom
   #?(:cljs    r/atom
      :default clojure.core/atom))
