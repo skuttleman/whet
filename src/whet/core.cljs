@@ -20,9 +20,9 @@
 (defn render-ui
   "creates a store, then mounts and renders the component with a store"
   ([ctx-map store->component]
-   (render-ui ctx-map store->component (constantly nil)))
-  ([ctx-map store->component cb]
+   (render-ui ctx-map store->component nil))
+  ([ctx-map store->component opts]
    (-> ctx-map
-       (store/create #(iwhet/handle-request %1 ctx-map %2))
+       (store/create #(iwhet/handle-request %1 ctx-map %2) opts)
        store->component
-       (render cb))))
+       (render (:cb opts (constantly nil))))))

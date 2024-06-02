@@ -52,10 +52,10 @@
 
 (defn create
   ""
-  [ctx-map request-fn]
+  [ctx-map request-fn opts]
   (-> ctx-map
       (res/with-ctx request-fn)
-      (defacto/create wd/init-db {:->sub r/atom})))
+      (defacto/create wd/init-db (assoc opts :->sub r/atom))))
 
 (defn hydrate-store
   ""
