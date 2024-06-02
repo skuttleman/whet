@@ -4,7 +4,8 @@
     [defacto.resources.core :as res]
     [whet.impl.store :as store]
     [whet.impl.middleware :as mw]
-    [whet.impl.template :as tmpl]))
+    [whet.impl.template :as tmpl]
+    whet.impl.defacto))
 
 (def ^{:arglists '([be-handler routes])} with-middleware
   "Wrap your backend handler AND your ui handler in this middleware when mounting your app."

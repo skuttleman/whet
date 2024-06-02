@@ -4,6 +4,7 @@
     [whet.impl.store :as store]
     [whet.interfaces :as iwhet]
     [whet.impl.history :as hist]
+    whet.impl.defacto
     whet.impl.http))
 
 (defn render
