@@ -13,14 +13,14 @@
 
 (defn into-template
   "Creates a store and generates an expanded hiccup template"
-  [ctx-map route ui-handler store->reagent-tree]
+  [ctx-map title route ui-handler store->reagent-tree]
   (let [store (store/hydrate-store ctx-map route ui-handler)
         tree (store->reagent-tree store)
         resources (defacto/subscribe store [::res/?:resources])]
     (tmpl/expand-tree tree)
     (while (some res/requesting? @resources)
       (Thread/sleep 1))
-    (tmpl/into-template store (tmpl/expand-tree tree))))
+    (tmpl/into-template title store (tmpl/expand-tree tree))))
 
 (defn with-html-heads
   "Add additional hiccup nodes to the template's <head> section"
