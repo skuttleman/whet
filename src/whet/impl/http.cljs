@@ -3,12 +3,9 @@
     [cljs-http.client :as http]
     [clojure.core.async :as async]
     [defacto.resources.core :as-alias res]
+    [whet.impl.store :as store]
     [whet.interfaces :as iwhet]
     [whet.utils.navigation :as nav]))
-
-(defn ^:private success? [status]
-  (and (integer? status)
-       (<= 200 status 299)))
 
 (defn ^:private prep [routes params]
   (let [{:keys [token route-params query-params]} (:route params)
@@ -24,6 +21,6 @@
   (async/go
     (let [params (prep routes params)
           {:keys [status body]} (async/<! (http/request params))]
-      (if (success? status)
+      (if (store/success? status)
         [::res/ok body]
         [::res/err body]))))

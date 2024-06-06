@@ -43,10 +43,17 @@
          (catch #?(:cljs :default :default Throwable) ex
            (throw ex)))))
 
+(defn success? [status]
+  (and (integer? status)
+       (<= 200 status 299)))
+
 (defn ^:private ->request-fn [handler]
   (fn [_ params]
     (try
-      [::res/ok (-> params handler :body)]
+      (let [{:keys [status body]} (handler params)]
+        (if (success? status)
+          [::res/ok body]
+          [::res/err body]))
       (catch #?(:cljs :default :default Throwable) ex
         [::res/err (-> ex ex-data :body)]))))
 
