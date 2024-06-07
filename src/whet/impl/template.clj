@@ -47,19 +47,21 @@
 (defn expand-tree
   "Recursively expands a tree of reagent components into a hiccup tree."
   [[node & args :as tree]]
-  (when-let [[node & args] (if-not (component? node)
-                             tree
-                             (loop [node (apply node args)]
-                               (if (component? node)
-                                 (recur (apply node args))
-                                 (expand-tree node))))]
-    (into [node]
-          (comp (map (partial expand* expand-tree))
-                (remove nil?))
-          args)))
+  (if (string? tree)
+    tree
+    (when-let [[node & args] (if-not (component? node)
+                               tree
+                               (loop [node (apply node args)]
+                                 (if (component? node)
+                                   (recur (apply node args))
+                                   (expand-tree node))))]
+      (into [node]
+            (comp (map (partial expand* expand-tree))
+                  (remove nil?))
+            args))))
 
 (defn into-template
-  ""
+  "Generates a hiccup template"
   [title store tree]
   [:html {:lang "en"}
    [:head
@@ -76,7 +78,7 @@
      tree]]])
 
 (defn render
-  ""
+  "Renders a hiccup template to html"
   [template]
   (->> template
        hiccup/html

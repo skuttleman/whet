@@ -58,14 +58,14 @@
         [::res/err (-> ex ex-data :body)]))))
 
 (defn create
-  ""
+  "Creates a reagent-compatible defacto store"
   [ctx-map request-fn opts]
   (-> ctx-map
       (res/with-ctx request-fn)
       (defacto/create wd/init-db (assoc opts :->sub r/atom))))
 
 (defn hydrate-store
-  ""
+  "Creates and initializes a backend store for component hydration"
   [ctx-map route ui-handler]
   (let [nav (->StubNav route nil)
         handler (-> ui-handler cljs-http->ring ->request-fn)
