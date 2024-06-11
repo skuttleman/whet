@@ -37,9 +37,7 @@
            (mapcat (fn [[k v]]
                      (when (some? v)
                        (map (fn [v']
-                              (cond-> (name k)
-                                (not (true? v'))
-                                (str "=" (encode (str (kw->str v'))))))
+                              (str (name k) "=" (encode (str (kw->str v')))))
                             (cond-> v (not (coll? v)) vector)))))
            seq
            (string/join "&")))
