@@ -47,14 +47,14 @@
 (defn expand-tree
   "Recursively expands a tree of reagent components into a hiccup tree."
   [[node & args :as tree]]
-  (if (string? tree)
-    tree
-    (when-let [[node & args] (if-not (component? node)
-                               tree
-                               (loop [node (apply node args)]
-                                 (if (component? node)
-                                   (recur (apply node args))
-                                   (expand-tree node))))]
+  (when-let [[node & args :as tree] (if-not (component? node)
+                                      tree
+                                      (loop [node (apply node args)]
+                                        (if (component? node)
+                                          (recur (apply node args))
+                                          (expand-tree node))))]
+    (if (string? tree)
+      tree
       (into [node]
             (comp (map (partial expand* expand-tree))
                   (remove nil?))
