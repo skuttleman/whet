@@ -1,6 +1,5 @@
 (ns whet.impl.store
   (:require
-    #?(:cljs [pushy.core :as pushy])
     [clojure.edn :as edn]
     [clojure.set :as set]
     [defacto.core :as defacto]
@@ -74,11 +73,3 @@
                 (res/with-ctx handler))]
     (doto (defacto.impl/->WatchableStore ctx (atom nil) defacto-api ->Sub)
       (->> (defacto/init! nav)))))
-
-(defmethod defacto/query-responder :whet.core/?:route
-  [db _]
-  (::routing db))
-
-(defmethod defacto/event-reducer :whet.core/navigated
-  [db [_ routing-info]]
-  (assoc db ::routing routing-info))

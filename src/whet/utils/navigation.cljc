@@ -1,6 +1,5 @@
 (ns whet.utils.navigation
   (:require
-    #?(:cljs [pushy.core :as pushy])
     [bidi.bidi :as bidi]
     [clojure.string :as string]
     [whet.interfaces :as iwhet])
