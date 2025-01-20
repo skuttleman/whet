@@ -13,8 +13,9 @@
     (-> params
         (dissoc :route)
         (assoc :url url)
+        (update-in [:headers "accept"] #(or % "application/edn"))
         (cond->
-          (not (:multipart-params params))
+          (:body params)
           (-> (assoc-in [:headers "content-type"] "application/edn")
               (update :body #(some-> % pr-str)))))))
 
