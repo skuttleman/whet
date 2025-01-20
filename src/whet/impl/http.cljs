@@ -13,8 +13,10 @@
     (-> params
         (dissoc :route)
         (assoc :url url)
-        (assoc-in [:headers "content-type"] "application/edn")
-        (update :body #(some-> % pr-str)))))
+        (cond->
+          (not (:multipart-params params))
+          (-> (assoc-in [:headers "content-type"] "application/edn")
+              (update :body #(some-> % pr-str)))))))
 
 (defmethod iwhet/handle-request :default
   [_ {:whet.core/keys [routes]} params]

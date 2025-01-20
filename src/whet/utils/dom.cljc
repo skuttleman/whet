@@ -29,6 +29,11 @@
     #?(:cljs
        (some-> .blur))))
 
+(defn click! [node]
+  (doto node
+    #?(:cljs
+       (some-> .click))))
+
 (defn focus! [node]
   (doto node
     #?(:cljs
