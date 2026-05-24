@@ -24,7 +24,7 @@
                      [body nil])]
     (if (:ns &env)
       `(r/with-let ~bindings
-                    ~@body
-                    ~(list 'finally
-                           `(do ~@fin)))
+         ~@body
+         ~(list 'finally
+                `(do ~@fin)))
       `(let ~bindings (try ~@body)))))

@@ -24,8 +24,13 @@
   (fn [req]
     (let [content-type (or (ring.req/content-type req)
                            "application/edn")
+          content-length (or (ring.req/content-length req)
+                             0)
           response (-> req
-                       (cond-> (string/starts-with? content-type "application/edn")
+                       (cond-> (zero? content-length)
+                               (dissoc :body)
+
+                               (string/starts-with? content-type "application/edn")
                                (update :body read-edn))
                        handler)]
       (cond-> response
