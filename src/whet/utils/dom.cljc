@@ -24,6 +24,10 @@
   #?(:cljs
      (some-> e .-target .-value)))
 
+(defn target-attr [e attr]
+  #?(:cljs
+     (some-> e .-target (.getAttribute attr))))
+
 (defn blur! [node]
   (doto node
     #?(:cljs
