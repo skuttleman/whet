@@ -7,6 +7,8 @@
     [whet.interfaces :as iwhet]
     [whet.utils.navigation :as nav]))
 
+(def ^:dynamic *req-middleware* [])
+
 (defn ^:private prep [routes params]
   (let [{:keys [token route-params query-params]} (:route params)
         url (nav/path-for routes token route-params query-params)]
@@ -23,7 +25,11 @@
   [_ {:whet.core/keys [routes]} params]
   (async/go
     (let [params (prep routes params)
-          {:keys [status body]} (async/<! (http/request params))]
+          request-fn (reduce (fn [request-fn mw]
+                               (mw request-fn))
+                             http/request
+                             *req-middleware*)
+          {:keys [status body]} (async/<! (request-fn params))]
       (if (store/success? status)
         [::res/ok body]
         [::res/err body]))))
