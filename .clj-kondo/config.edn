@@ -1,0 +1,4 @@
+{:linters {:unused-binding          {:level :off}
+           :unused-private-function {:level :off}
+           :unused-private-var      {:level :off}}
+ :lint-as {whet.utils.reagent/with-let clojure.core/let}}
