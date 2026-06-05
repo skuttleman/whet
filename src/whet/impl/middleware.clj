@@ -35,7 +35,8 @@
                        handler)]
       (cond-> response
         (and (nil? (get-in response [:headers "content-type"]))
-             (some? (:body response)))
+             (some? (:body response))
+             (not (:whet.core/raw? response)))
         (-> (assoc-in [:headers "content-type"] "application/edn")
             (update :body pr-str))))))
 
