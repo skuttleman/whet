@@ -1,13 +1,13 @@
 {:paths ["src"]
  :deps  {bidi/bidi                 {:mvn/version "2.1.6"
                                     :exclusions  [ring/ring-core]}
-         cljs-http/cljs-http       {:mvn/version "0.1.46"}
-         hiccup/hiccup             {:mvn/version "1.0.5"}
+         cljs-http/cljs-http       {:mvn/version "0.1.49"}
+         hiccup/hiccup             {:mvn/version "2.0.0"}
          kibu/pushy                {:mvn/version "0.3.8"}
-         org.clojure/clojure       {:mvn/version "1.11.1"}
-         org.clojure/clojurescript {:mvn/version "1.11.60"}
-         reagent/reagent           {:mvn/version "1.2.0"}
-         ring/ring-core            {:mvn/version "1.9.6"}
+         org.clojure/clojure       {:mvn/version "1.12.5"}
+         org.clojure/clojurescript {:mvn/version "1.12.145"}
+         reagent/reagent           {:mvn/version "2.0.1"}
+         ring/ring-core            {:mvn/version "1.15.4"}
          skuttleman/defacto-forms+ {:git/url   "https://github.com/skuttleman/defacto"
-                                    :git/sha   "c1e93945788ed8adab1a2fc9a08804f5bf987dfe"
+                                    :git/sha   "14c8cb87435bd5e5fef2659bdb866da9574a3592"
                                     :deps/root "forms+"}}}
