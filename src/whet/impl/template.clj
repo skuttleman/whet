@@ -44,6 +44,17 @@
   (or (fn? node)
       (instance? MultiFn node)))
 
+(defn ^:private env->script [ui-env]
+  (let [builder (StringBuilder.)]
+    (doseq [[k v] ui-env]
+      (doto builder
+        (.append "window.")
+        (.append (str k))
+        (.append " = ")
+        (.append (pr-str (pr-str v)))
+        (.append ";\n")))
+    (hiccup/raw (str builder))))
+
 (defn expand-tree
   "Recursively expands a tree of reagent components into a hiccup tree."
   [[node & args :as tree]]
@@ -62,7 +73,7 @@
 
 (defn into-template
   "Generates a hiccup template"
-  [title store tree]
+  [title store tree ui-env]
   [:html {:lang "en"}
    [:head
     [:title title]
@@ -71,7 +82,7 @@
     [:meta {:http-equiv "X-UA-Compatible" :content "ie=edge"}]
     [:link {:rel "stylesheet" :href "/css/main.css"}]
     [:script {:type "application/javascript"}
-     "window.WHET_INITIAL_DB = " (hiccup/raw (pr-str (pr-str @store)))]
+     (env->script (assoc ui-env "WHET_INITIAL_DB" @store))]
     [:script {:src "/js/main.js" :type "application/javascript" :defer true}]]
    [:body
     [:div#root
