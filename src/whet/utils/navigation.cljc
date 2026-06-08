@@ -1,7 +1,8 @@
 (ns whet.utils.navigation
   (:require
-    [bidi.bidi :as bidi]
     [clojure.string :as string]
+    [reitit.coercion :as coercion]
+    [reitit.core :as r]
     [whet.interfaces :as iwhet])
   #?(:clj
      (:import
@@ -63,26 +64,41 @@
     (cond-> uri
       query (str "?" query))))
 
+(defn ^:private route-param-keys
+  "Returns a map from reitit path-param keyword to app-domain namespaced keyword for a named route."
+  [router token]
+  (get-in (r/match-by-name router token) [:data :param-keys] {}))
+
 (defn path-for
   "Produces a path from a route handle and optional params."
-  ([routes token]
-   (path-for routes token nil))
-  ([routes token route-params]
-   (path-for routes token route-params nil))
-  ([routes token route-params query-params]
-   (let [route-info (apply bidi/path-for routes token (flatten (seq route-params)))]
-     (with-qp route-info query-params))))
+  ([router token]
+   (path-for router token nil))
+  ([router token route-params]
+   (path-for router token route-params nil))
+  ([router token route-params query-params]
+   (let [param-keys (route-param-keys router token)
+         inv-keys (into {} (map (fn [[k v]] [v k])) param-keys)
+         reitit-params (into {} (map (fn [[k v]] [(get inv-keys k k) (str (kw->str v))])) route-params)
+         path (:path (r/match-by-name router token reitit-params))]
+     (with-qp path query-params))))
 
 (defn match
   "Matches a route uri and parses route info."
-  [routes uri]
+  [router uri]
   (let [[path query-string] (string/split uri #"\?")
         anchor #?(:cljs (some-> js/document.location.hash not-empty (subs 1))
                   :default nil)
-        {:keys [handler route-params]} (bidi/match-route routes path)]
-    (cond-> {:token        handler
+        m (r/match-by-path router path)
+        token (get-in m [:data :name])
+        param-keys (get-in m [:data :param-keys] {})
+        coerced-path (:path (coercion/coerce! m))
+        route-params (into {}
+                           (map (fn [[k v]]
+                                  [(get param-keys k k) v]))
+                           (or coerced-path (:path-params m)))]
+    (cond-> {:token        token
              :uri          uri
-             :route-params (iwhet/coerce-route-params handler route-params)
+             :route-params route-params
              :query-params (->query-params query-string)}
       anchor (assoc :anchor anchor))))
 

@@ -7,11 +7,6 @@
   (replace! [this token route-params query-params]
     "replaces the current state in the browser's history"))
 
-(defmulti ^{:arglists '([token params])} coerce-route-params
-          "coerce route params for a token"
-          (fn [token _] token))
-(defmethod coerce-route-params :default [_ params] params)
-
 (defmulti ^{:arglists '([spec-key ctx-map params])} handle-request
           "extend this multimethod to support defacto resource
            request-fn other than the http client provided"
