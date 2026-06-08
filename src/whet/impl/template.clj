@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     [clojure.walk :as walk]
-    [hiccup.core :as hiccup])
+    [hiccup2.core :as hiccup])
   (:import
     (clojure.lang MultiFn)))
 
@@ -71,7 +71,7 @@
     [:meta {:http-equiv "X-UA-Compatible" :content "ie=edge"}]
     [:link {:rel "stylesheet" :href "/css/main.css"}]
     [:script {:type "application/javascript"}
-     "window.WHET_INITIAL_DB = " (pr-str (pr-str @store))]
+     "window.WHET_INITIAL_DB = " (hiccup/raw (pr-str (pr-str @store)))]
     [:script {:src "/js/main.js" :type "application/javascript" :defer true}]]
    [:body
     [:div#root
