@@ -78,7 +78,7 @@
      tree]]])
 
 (defn render
-  "Renders a hiccup template to html"
+  "Renders a hiccup template to HTML"
   [template]
   (->> template
        hiccup/html
