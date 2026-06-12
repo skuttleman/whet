@@ -1,11 +1,12 @@
 (ns whet.core
   (:require
-    [defacto.core :as defacto]
-    [defacto.resources.core :as res]
-    [whet.impl.store :as store]
-    [whet.impl.middleware :as mw]
-    [whet.impl.template :as tmpl]
-    whet.impl.defacto))
+   [clojure.core.async :as async]
+   [defacto.core :as defacto]
+   [defacto.resources.core :as res]
+   [whet.impl.store :as store]
+   [whet.impl.middleware :as mw]
+   [whet.impl.template :as tmpl]
+   whet.impl.defacto))
 
 (def ^{:arglists '([be-handler routes])} with-middleware
   "Wrap your backend handler AND your ui handler in this middleware when mounting your app."
@@ -14,13 +15,14 @@
 (defn into-template
   "Creates a store and generates an expanded hiccup template"
   [ctx-map title route ui-handler store->reagent-tree ui-env]
-  (let [store (store/hydrate-store ctx-map route ui-handler)
-        tree (store->reagent-tree store)
-        resources (defacto/subscribe store [::res/?:resources])]
-    (tmpl/expand-tree tree)
-    (while (some res/requesting? @resources)
-      (Thread/sleep 1))
-    (tmpl/into-template title store (tmpl/expand-tree tree) ui-env)))
+  (async/go
+    (let [store (store/hydrate-store ctx-map route ui-handler)
+          tree (store->reagent-tree store)
+          resources (defacto/subscribe store [::res/?:resources])]
+      (tmpl/expand-tree tree)
+      (while (some res/requesting? @resources)
+        (async/<! (async/timeout 1)))
+      (tmpl/into-template title store (tmpl/expand-tree tree) ui-env))))
 
 (defn with-html-heads
   "Add additional hiccup nodes to the template's <head> section"
