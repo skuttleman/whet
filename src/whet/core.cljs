@@ -23,6 +23,6 @@
    (render-ui ctx-map store->component nil))
   ([ctx-map store->component opts]
    (-> ctx-map
-       (store/create #(iwhet/handle-request %1 ctx-map %2) opts)
+       (store/create ((:request-mw opts identity) #(iwhet/handle-request %1 ctx-map %2)) opts)
        store->component
        (render (:cb opts (constantly nil))))))
