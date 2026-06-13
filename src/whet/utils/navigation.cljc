@@ -35,9 +35,11 @@
   [params]
   (some->> params
            (mapcat (fn [[k v]]
-                     (when (some? v)
-                       (map (fn [v']
-                              (str (name k) "=" (encode (str (kw->str v')))))
+                     (when v
+                       (keep (fn [v']
+                               (cond-> (name k)
+                                 (not (true? v'))
+                                 (str "=" (encode (str (kw->str v'))))))
                             (cond-> v (not (coll? v)) vector)))))
            seq
            (string/join "&")))
@@ -52,7 +54,9 @@
     (reduce (fn [params pair]
               (let [[k v] (string/split pair #"=")
                     k (keyword k)
-                    v (if (re-find #"=" pair) (decode (str v)) true)]
+                    v (if (and (re-find #"=" pair) (seq v))
+                        (decode (str v))
+                        true)]
                 (if (contains? params k)
                   (assoc params k (conj (wrap-set (get params k)) v))
                   (assoc params k v))))
