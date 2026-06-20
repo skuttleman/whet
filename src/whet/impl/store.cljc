@@ -29,7 +29,7 @@
    :query-responder defacto/query-responder})
 
 (defn ^:private ->Sub [atom-db query]
-  (defacto.impl/->StandardSubscription atom-db query defacto/query-responder false))
+  (defacto.impl/->StandardSubscription atom-db query defacto/query-responder))
 
 (defn ^:private cljs-http->ring [handler]
   (fn [req]
