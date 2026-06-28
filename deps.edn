@@ -8,5 +8,5 @@
          reagent/reagent           {:mvn/version "1.3.0"}
          ring/ring-core            {:mvn/version "1.15.4"}
          skuttleman/defacto-forms+ {:git/url   "https://github.com/skuttleman/defacto"
-                                    :git/sha   "8fd3624a48790e7abfdf58e805844ad8080efae8"
+                                    :git/sha   "608b1f712c519daf85aaadf64d52942c81812f36"
                                     :deps/root "forms+"}}}
